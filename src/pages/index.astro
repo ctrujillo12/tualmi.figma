@@ -1,11 +1,148 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import '../styles/global.css';
+import { products } from '../data/products.js';
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tualmi - Women's Outdoor Clothing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant:wght@300;400;500&family=Inter:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Nav -->
+    <nav class="nav">
+      <a href="/"><img src="/images/logo.png" alt="Tualmi" class="logo" /></a>
+      <div class="nav-links">
+        <a href="#collection">COLLECTION</a>
+        <a href="#about">ABOUT</a>
+        <a href="/cart">CART</a>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+      <img src="/images/tuolumne.jpg" alt="Mountain landscape" class="hero-image" />
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1 class="brand-name">tualmi</h1>
+        <p class="mission">
+          Thoughtfully designed outdoor wear for women who seek adventure without compromise.
+          Sustainably crafted, elegantly refined.
+        </p>
+        <div class="eco-badge"><span>●</span><span>SUSTAINABLE</span></div>
+      </div>
+    </section>
+
+    <!-- Collection -->
+    <section class="collection" id="collection">
+      <div class="collection-header">
+        <h2 class="section-title">Debut Collection</h2>
+        <p class="section-subtitle">Elevated essentials for your next journey</p>
+      </div>
+
+      <div class="product-grid">
+        {products.map((product, index) => (
+          <a 
+            href={`/products/${product.slug}`} 
+            class="product-card" 
+            data-product={product.slug} 
+            data-price={`$${product.price}`}
+            style={`animation-delay: ${index * 0.1}s`}
+          >
+            <div class="product-image-container">
+              <img src={product.images[0]} alt={product.name} class="product-image" />
+              {product.preOrder && <div class="product-badge">PRE-ORDER</div>}
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">{product.name}</h3>
+              <p class="product-price">${product.price}</p>
+
+              {product.colors.length > 1 && (
+                <div class="color-carousel">
+                  {product.colors.map((color, colorIndex) => (
+                    <div
+                      class={`color-swatch ${colorIndex === 0 ? 'active' : ''}`}
+                      style={`background: ${color.gradient ?? '#ccc'}`}
+                      data-image={color.image}
+                    ></div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="about">
+      <div class="footer-content">
+        <div class="footer-grid">
+          <div class="footer-section">
+            <h3 class="footer-title">Natural Materials</h3>
+            <p class="footer-text">
+              We craft every piece with sustainable, natural fabrics that honor the earth and feel incredible against your skin.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3 class="footer-title">Giving Back</h3>
+            <p class="footer-text">
+              5% of all profits support conservation efforts protecting the wild places that inspire us. Together, we've planted over 10,000 trees.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3 class="footer-title">Yosemite Inspired</h3>
+            <p class="footer-text">
+              Born from the beauty of Tuolumne Meadows, where granite peaks meet alpine wildflowers and endless possibility.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3 class="footer-title">By Women, For Women</h3>
+            <p class="footer-text">
+              Women now make up 47% of outdoor enthusiasts. A California-born brand redefining women's gear with fashion and function at its core.
+            </p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p class="footer-tagline">Adventure meets elegance</p>
+          <p class="footer-copyright">© 2025 Tualmi. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Show product cards
+        document.querySelectorAll('.product-card').forEach(card => card.classList.add('visible'));
+        document.querySelectorAll('.footer-section').forEach(section => section.classList.add('visible'));
+
+        // Color swatch hover
+        document.querySelectorAll('.color-swatch').forEach(swatch => {
+          swatch.addEventListener('mouseenter', (e) => {
+            const target = e.currentTarget;
+
+            const productCard = target.closest('.product-card');
+            if (!productCard) return;
+
+            const productImage = productCard.querySelector<HTMLImageElement>('.product-image');
+            const newImage = target.getAttribute('data-image');
+            if (newImage && productImage) productImage.src = newImage;
+
+            // Update active state
+            const siblings = target.parentElement?.querySelectorAll('.color-swatch') || [];
+            siblings.forEach(s => s.classList.remove('active'));
+            target.classList.add('active');
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

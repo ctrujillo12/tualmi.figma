@@ -1,0 +1,113 @@
+---
+import '../../styles/global.css';
+import { products } from '../../data/products.js';
+
+// Generate static paths for all products
+export function getStaticPaths() {
+  return products.map(product => ({
+    params: { slug: product.slug },
+    props: { product }
+  }));
+}
+
+const { product } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{product.name} | Tualmi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant:wght@300;400;500&family=Inter:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav class="nav">
+      <a href="/"><img src="/images/logo.png" alt="Tualmi" class="logo" /></a>
+      <div class="nav-links">
+        <a href="/#collection">COLLECTION</a>
+        <a href="/#about">ABOUT</a>
+        <a href="/cart">CART</a>
+      </div>
+    </nav>
+
+    <main class="container">
+      <a href="/#collection" class="back-link">← Back to Collection</a>
+
+      <div class="product-layout">
+        <!-- Gallery -->
+        <div class="gallery">
+          <img id="mainImage" src={product.images[0]} alt={product.name} class="main-image" />
+          {product.images.length > 1 && (
+            <div class="thumb-row">
+              {product.images.map((img, i) => (
+                <button class="thumb" data-image={img} aria-label={`View image ${i + 1}`}>
+                  <img src={img} alt={`${product.name} view ${i + 1}`} />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <!-- Details -->
+        <div class="details">
+          <h1 class="product-title">{product.name}</h1>
+          <p class="product-price-large">${product.price}</p>
+          {product.preOrder && <div class="preorder-badge">PRE-ORDER</div>}
+
+          {product.colors.length > 0 && (
+            <div>
+              <p class="label">Color</p>
+              <div id="colorOptions" class="product-colors">
+                {product.colors.map((color, i) => (
+                  <div
+                    class={`color-swatch ${i === 0 ? 'active' : ''}`}
+                    style={`background: ${color.gradient ?? '#ccc'}`}
+                    data-image={color.image}
+                    data-color={color.name}
+                  ></div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div>
+            <p class="label">Size</p>
+            <div id="sizeOptions" class="size-grid">
+              {['XS','S','M','L','XL'].map(size => (
+                <button class="size-btn" data-size={size}>{size}</button>
+              ))}
+            </div>
+          </div>
+
+          <div class="purchase-row">
+            <select id="qty" class="qty-select" aria-label="Quantity">
+              {[1,2,3,4,5].map(n => <option value={n}>{n}</option>)}
+            </select>
+            <button id="addToCartBtn" class="add-btn">Add to Cart</button>
+          </div>
+
+          <div id="miniCart" class="mini-cart" hidden>
+            <span class="mini-text">Added to cart</span>
+            <a href="/cart" class="view-cart">View Cart</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <p>© 2025 Tualmi. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/scripts/cart-manager.js" is:inline></script>
+    <script src="/scripts/product-page.js" is:inline></script>
+  </body>
+</html>

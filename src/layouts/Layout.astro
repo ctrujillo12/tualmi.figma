@@ -1,22 +1,35 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+---
+const { title } = Astro.props;
+---
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title ? `${title} | Tualmi` : 'Tualmi'}</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <a href="/" class="logo">
+        <img src="/images/logo.png" alt="Tualmi Logo" />
+      </a>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/products">Shop</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <slot />  <!-- Where the page content will go -->
+    </main>
+
+    <footer class="site-footer">
+      <p>© {new Date().getFullYear()} Tualmi. All rights reserved.</p>
+    </footer>
+    <script src="/scripts/cart-manager.js" is:inline></script>
+  </body>
+</html>
