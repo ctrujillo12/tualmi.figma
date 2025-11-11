@@ -2,7 +2,6 @@
 import '../../styles/global.css';
 import { products } from '../../data/products.js';
 
-// Generate static paths for all products
 export function getStaticPaths() {
   return products.map(product => ({
     params: { slug: product.slug },
@@ -26,6 +25,7 @@ const { product } = Astro.props;
       rel="stylesheet"
     />
   </head>
+
   <body>
     <nav class="nav">
       <a href="/"><img src="/images/logo.png" alt="Tualmi" class="logo" /></a>
@@ -79,26 +79,36 @@ const { product } = Astro.props;
           <div>
             <p class="label">Size</p>
             <div id="sizeOptions" class="size-grid">
-              {['XS','S','M','L','XL'].map(size => (
+              {['XS', 'S', 'M', 'L', 'XL'].map(size => (
                 <button class="size-btn" data-size={size}>{size}</button>
               ))}
             </div>
           </div>
 
+          <!-- Preorder Section -->
           <div class="purchase-row">
             <select id="qty" class="qty-select" aria-label="Quantity">
-              {[1,2,3,4,5].map(n => <option value={n}>{n}</option>)}
+              {[1, 2, 3, 4, 5].map(n => <option value={n}>{n}</option>)}
             </select>
-            <button id="addToCartBtn" class="add-btn">Add to Cart</button>
-          </div>
-
-          <div id="miniCart" class="mini-cart" hidden>
-            <span class="mini-text">Added to cart</span>
-            <a href="/cart" class="view-cart">View Cart</a>
+            <button id="preorderBtn" class="add-btn preorder">Preorder</button>
           </div>
         </div>
       </div>
     </main>
+
+    <!-- Preorder Modal -->
+    <div id="preorderModal" class="modal" hidden>
+      <div class="modal-content">
+        <button id="closeModal" class="close-btn" aria-label="Close">×</button>
+        <h2>Join the Waitlist</h2>
+        <p>Enter your email to be notified when this product is available for preorder payment.</p>
+        <form id="preorderForm">
+          <input type="email" id="preorderEmail" placeholder="you@example.com" required />
+          <button type="submit" class="submit-btn">Notify Me</button>
+        </form>
+        <div id="successMsg" class="success-msg" hidden>✅ You’re on the list!</div>
+      </div>
+    </div>
 
     <footer class="footer">
       <div class="footer-content">
@@ -106,8 +116,68 @@ const { product } = Astro.props;
       </div>
     </footer>
 
-    <!-- Scripts -->
-    <script src="/scripts/cart-manager.js" is:inline></script>
-    <script src="/scripts/product-page.js" is:inline></script>
+    <!-- ✅ Ensure your JS loads and runs -->
+    <script type="module" src="/scripts/preorder.js"></script>
+
+
+    <style>
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+      }
+      .modal-content {
+        background: #fff;
+        color: #222;
+        padding: 2rem;
+        border-radius: 8px;
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+        position: relative;
+      }
+      .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        border: none;
+        background: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+      input[type="email"] {
+        width: 100%;
+        padding: 0.75rem;
+        margin: 1rem 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .submit-btn {
+        background: #e1a2a6;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        color: white;
+        font-weight: 500;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .submit-btn:hover {
+        background: #d98c91;
+      }
+      .success-msg {
+        margin-top: 1rem;
+        color: green;
+      }
+      .preorder {
+        background-color: #e1a2a6;
+      }
+      .preorder:hover {
+        background-color: #d98c91;
+      }
+    </style>
   </body>
 </html>
